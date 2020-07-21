@@ -2,13 +2,25 @@
 
 **initial development**: extremely unstable
 
-`clone this project`
+Clone this project:
+
+`git clone https://github.com/babyadoresorange/vscode-trace-extension.git`
+
+Download the dependencies
 
 `yarn`
 
-`yarn watch:react` (currently slow recompilation)
+Build the react application, to be used by the trace viewer web view:
 
-`f5 to open extension host in watch mode`
+`yarn build:react` or `yarn watch:react` (currently slow recompilation)
+
+Open this project in vscode:
+
+`code .`
+
+Run the extension under development:
+
+Press `f5` to open extension host in watch mode.
 
 ## Features
 

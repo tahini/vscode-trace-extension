@@ -13,7 +13,7 @@ class TraceManager {
      * @returns The opened trace
      */
   async openTrace(traceURI: string, traceName: string): Promise<TspTrace | undefined> {
-    const traceResponse = await tspClient.openTrace(new Query({
+    const traceResponse = await tspClient().openTrace(new Query({
       'name': traceName,
       'uri': traceURI
     }));
@@ -32,7 +32,7 @@ class TraceManager {
       let conflictResolutionResponse = traceResponse;
       let i = 1;
       while (conflictResolutionResponse.getStatusCode() === 409) {
-        conflictResolutionResponse = await handleConflict(tspClient, i);
+        conflictResolutionResponse = await handleConflict(tspClient(), i);
         i++;
       }
       const trace = conflictResolutionResponse.getModel();

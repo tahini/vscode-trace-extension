@@ -43,12 +43,18 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
   process.exit(1);
 }
 
+const argv = require('yargs-parser')(process.argv.slice(2), {
+  configuration: {
+    'boolean-negation': false
+  }
+});
+
+// TODO: optimize development mode, for the moment just use production
 // Generate configuration
-const config = configFactory('production');
+const config = configFactory(argv.mode === 'development' ? 'production' : 'production');
 
 // Custom option no split outputs
-const args = process.argv.slice(2);
-if (args.includes('--no-split')) {
+if (argv.noSplit) {
   config.optimization.splitChunks = {
     cacheGroups: {
       default: false
@@ -58,7 +64,15 @@ if (args.includes('--no-split')) {
   config.optimization.runtimeChunk = false;
 }
 // Basic watch
-if (args.includes('--watch')) { return webpack(config).watch({}, () => console.log("Recompiled successfully. Watching...")); }
+if (argv.watch) {
+  const wp = webpack(config);
+  wp.hooks.watchRun.tap('compile', () => console.log("\nCompiling react-app..."));
+  return wp.watch({}, () => {
+    console.log("Compiled react-app successfully. compiling extension...");
+    require('child_process').execSync('yarn build:extension', { stdio: 'inherit', stderr: 'inherit' });
+    console.log("Done. Watching...");
+  });
+}
 
 // We require that you explicitly set browsers and do not fall back to
 // browserslist defaults.

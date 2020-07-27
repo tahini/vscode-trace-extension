@@ -61,6 +61,16 @@
 					"group": "inline"
 				}
 			]
+		},
+		"configuration": {
+			"title": "Trace Compass",
+			"properties": {
+			  "trace-compass.traceserver.url": {
+				"type": "string",
+				"default": "http://localhost:8080",
+				"description": "Enter the trace server's URL, including port. Eg: http://localhost:8080."
+			  }
+			}
 		}
 	},
 	"scripts": {

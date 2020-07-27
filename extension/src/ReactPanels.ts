@@ -53,7 +53,18 @@ export class ReactPanel {
 
 		// Listen for when the panel is disposed
 		// This happens when the user closes the panel or when the panel is closed programatically
-		this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
+		this._panel.onDidDispose(() => {
+			this.dispose();
+			ReactPanel.currentPanel[name] = undefined;
+			return this._disposables;
+
+		});
+
+		this._panel.onDidChangeViewState(e => {
+			if (e.webviewPanel.active) {
+				console.log("TODO: Fire panel active event");
+			}
+		});
 
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(message => {

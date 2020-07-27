@@ -21,7 +21,7 @@ export class ExperimentManager {
       traceURIs.push(traces[i].UUID);
     }
 
-    const experimentResponse = await tspClient.createExperiment(new Query({
+    const experimentResponse = await tspClient().createExperiment(new Query({
       'name': name,
       'traces': traceURIs
     }));
@@ -40,7 +40,7 @@ export class ExperimentManager {
       let conflictResolutionResponse = experimentResponse;
       let i = 1;
       while (conflictResolutionResponse.getStatusCode() === 409) {
-        conflictResolutionResponse = await handleConflict(tspClient, i);
+        conflictResolutionResponse = await handleConflict(tspClient(), i);
         i++;
       }
       const experiment = conflictResolutionResponse.getModel();
@@ -57,7 +57,7 @@ export class ExperimentManager {
  * @param experimentUUID experiment UUID
  */
   async getAvailableOutputs(experimentUUID: string): Promise<OutputDescriptor[] | undefined> {
-    const outputsResponse = await tspClient.experimentOutputs(experimentUUID);
+    const outputsResponse = await tspClient().experimentOutputs(experimentUUID);
     return outputsResponse.getModel();
   }
 }

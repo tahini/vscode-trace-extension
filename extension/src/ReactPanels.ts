@@ -13,7 +13,7 @@ export class ReactPanel {
 	 * Track the currently panel. Only allow a single panel to exist at a time.
 	 */
 	public static currentPanel = {} as {
-		[key: string]: ReactPanel
+		[key: string]: ReactPanel | undefined
 	};
 
 	private static readonly viewType = 'react';
@@ -27,8 +27,9 @@ export class ReactPanel {
 
 		// If we already have a panel, show it.
 		// Otherwise, create a new panel.
-		if (ReactPanel.currentPanel[name]) {
-			ReactPanel.currentPanel[name]._panel.reveal(column);
+		let openedPanel = ReactPanel.currentPanel[name];
+		if (openedPanel) {
+			openedPanel._panel.reveal(column);
 		} else {
 			ReactPanel.currentPanel[name] = new ReactPanel(extensionPath, column || vscode.ViewColumn.One, name);
 		}

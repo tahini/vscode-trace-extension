@@ -1,8 +1,10 @@
 {
-	"name": "trace-compass",
+	"name": "vscode-trace-compass",
 	"displayName": "Trace Compass",
 	"description": "",
 	"version": "0.0.1",
+	"publisher": "polytechnique-montreal",
+	"repository": "https://github.com/babyadoresorange/vscode-trace-extension",
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -17,7 +19,8 @@
 		"commands": [
 			{
 				"command": "traces.openTrace",
-				"title": "Open Trace"
+				"title": "Open Trace",
+				"icon": "assets/media/dep.svg"
 			}
 		],
 		"viewsContainers": {

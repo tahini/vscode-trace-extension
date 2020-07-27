@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 function createTspClient() {
     const tsConfig = vscode.workspace.getConfiguration('trace-compass.traceserver');
     let traceServerUrl = tsConfig.get<string>("url");
-    return new TspClient(traceServerUrl);
+    return new TspClient(traceServerUrl ? traceServerUrl: 'http://localhost:8080');
 }
 
 export function updateTspClient() {

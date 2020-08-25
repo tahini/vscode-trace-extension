@@ -1,8 +1,8 @@
 'use strict';
 import * as vscode from 'vscode';
 import { TracesProvider, traceHandler } from "./views/traces/TracesTree";
-import { AnalysisProvider } from "./views/analysis/AnalysisTree";
-import { tspClient, updateTspClient } from "./tspClient";
+import { AnalysisProvider, analysisHandler } from "./views/analysis/AnalysisTree";
+import { updateTspClient } from "./tspClient";
 
 export function activate(context: vscode.ExtensionContext) {
 
@@ -19,10 +19,14 @@ export function activate(context: vscode.ExtensionContext) {
     handler(context, trace);
   }));
 
+  context.subscriptions.push(vscode.commands.registerCommand("outputs.openOutput", (output) => {
+    analysisHandler(context, output);
+  }));
+
   // Listening to configuration change for the trace server URL
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
 
-		if (e.affectsConfiguration('trace-compass.traceserver.url')) {
+		if (e.affectsConfiguration('trace-compass.traceserver.url') || e.affectsConfiguration('trace-compass.traceserver.apiPath')) {
       updateTspClient();
 		}
 

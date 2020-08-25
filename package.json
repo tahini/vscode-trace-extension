@@ -5,6 +5,9 @@
 	"version": "0.0.1",
 	"publisher": "polytechnique-montreal",
 	"repository": "https://github.com/babyadoresorange/vscode-trace-extension",
+	"extensionKind": [
+		"ui"
+	],
 	"engines": {
 		"vscode": "^1.47.0"
 	},
@@ -62,17 +65,27 @@
 					"command": "traces.openTrace",
 					"when": "view == traces",
 					"group": "inline"
+				},
+				{
+					"command": "outputs.openOutput",
+					"when": "view == analysis",
+					"group": "inline"
 				}
 			]
 		},
 		"configuration": {
 			"title": "Trace Compass",
 			"properties": {
-			  "trace-compass.traceserver.url": {
-				"type": "string",
-				"default": "http://localhost:8080",
-				"description": "Enter the trace server's URL, including port. Eg: http://localhost:8080."
-			  }
+				"trace-compass.traceserver.url": {
+					"type": "string",
+					"default": "http://localhost:8080",
+					"description": "Enter the trace server's URL, including port. Eg: http://localhost:8080."
+				},
+				"trace-compass.traceserver.apiPath": {
+					"type": "string",
+					"default": "tsp/api",
+					"description": "Enter the trace server's API path, to be appended to the server URL. Eg: 'tsp/api'."
+				}
 			}
 		}
 	},
@@ -98,6 +111,7 @@
 		"@types/node": "^13.11.0",
 		"@types/react": "^16.9.43",
 		"@types/react-dom": "^16.9.8",
+		"@types/react-grid-layout": "^0.17.2",
 		"@types/vscode": "^1.47.0",
 		"@typescript-eslint/eslint-plugin": "^2.30.0",
 		"@typescript-eslint/parser": "^2.30.0",
@@ -159,6 +173,8 @@
 	"dependencies": {
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
+		"react-grid-layout": "^1.0.0",
+		"timeline-chart": "next",
 		"tsp-typescript-client": "^0.1.0"
 	},
 	"jest": {

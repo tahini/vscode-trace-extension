@@ -2,12 +2,15 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Trace as TspTrace } from 'tsp-typescript-client/lib/models/trace';
-import { traceManager } from "../../models/TraceManager";
-import { experimentManager } from "../../models/ExperimentManager";
+import { TraceManager } from "../../models/trace-manager";
+import { ExperimentManager } from "../../models/experiment-manager";
 import { AnalysisProvider } from "../analysis/AnalysisTree";
 import { ReactPanel } from "../../ReactPanels";
 
 const rootPath = path.resolve(__dirname, '../../../..');
+
+const traceManager = new TraceManager();
+const experimentManager = new ExperimentManager();
 
 export class TracesProvider implements vscode.TreeDataProvider<Trace> {
   constructor(private workspaceRoot: string) { }
@@ -76,13 +79,14 @@ export class Trace extends vscode.TreeItem {
 }
 
 export const traceHandler = (analysisTree: AnalysisProvider) => (context: vscode.ExtensionContext, trace: Trace) => {
-  ReactPanel.createOrShow(context.extensionPath, trace.name);
+  const panel = ReactPanel.createOrShow(context.extensionPath, trace.name);
   (async () => {
     const traces = new Array<TspTrace>();
     const t = await traceManager.openTrace(trace.uri, trace.name);
     if (t) { traces.push(t); };
     const experiment = await experimentManager.openExperiment(trace.name, traces);
     if (experiment) {
+      panel.setExperiment(experiment);
       const descriptors = await experimentManager.getAvailableOutputs(experiment.UUID);
       if (descriptors && descriptors.length) {
         analysisTree.refresh(descriptors);

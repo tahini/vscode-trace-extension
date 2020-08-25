@@ -1,6 +1,8 @@
-'use strict';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { Experiment } from 'tsp-typescript-client/lib/models/experiment';
+import { getTspClient } from "./tspClient";
+import { OutputDescriptor } from 'tsp-typescript-client/lib/models/output-descriptor';
 
 // inspired by https://github.com/rebornix/vscode-webview-react
 // TODO: manage mutiple panels (currently just a hack around, need to be fixed)
@@ -10,29 +12,38 @@ import * as vscode from 'vscode';
  */
 export class ReactPanel {
 	/**
-	 * Track the currently panel. Only allow a single panel to exist at a time.
+	 * Track the currently panels. Only allow a single panel to exist at a time.
 	 */
-	public static currentPanel = {} as {
+	public static activePanels = {} as {
 		[key: string]: ReactPanel | undefined
 	};
 
 	private static readonly viewType = 'react';
+	private static currentPanel: ReactPanel | undefined;
 
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionPath: string;
 	private _disposables: vscode.Disposable[] = [];
+	private _experiment: Experiment = undefined;
 
-	public static createOrShow(extensionPath: string, name: string) {
+	public static createOrShow(extensionPath: string, name: string): ReactPanel {
 		const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;
 
 		// If we already have a panel, show it.
 		// Otherwise, create a new panel.
-		let openedPanel = ReactPanel.currentPanel[name];
+		let openedPanel = ReactPanel.activePanels[name];
 		if (openedPanel) {
 			openedPanel._panel.reveal(column);
 		} else {
-			ReactPanel.currentPanel[name] = new ReactPanel(extensionPath, column || vscode.ViewColumn.One, name);
+			openedPanel = new ReactPanel(extensionPath, column || vscode.ViewColumn.One, name);
+			ReactPanel.activePanels[name] = openedPanel;
 		}
+		ReactPanel.currentPanel = openedPanel;
+		return openedPanel;
+	}
+
+	public static addOutputToCurrent(descriptor: OutputDescriptor) {
+		ReactPanel.currentPanel!.addOutput(descriptor);
 	}
 
 	private constructor(extensionPath: string, column: vscode.ViewColumn, name: string) {
@@ -49,6 +60,9 @@ export class ReactPanel {
 			]
 		});
 
+		// Post the tspTypescriptClient
+		this._panel.webview.postMessage({command: "set-tspClient", data: getTspClient()});
+
 		// Set the webview's initial html content 
 		this._panel.webview.html = this._getHtmlForWebview();
 
@@ -56,7 +70,7 @@ export class ReactPanel {
 		// This happens when the user closes the panel or when the panel is closed programatically
 		this._panel.onDidDispose(() => {
 			this.dispose();
-			ReactPanel.currentPanel[name] = undefined;
+			ReactPanel.activePanels[name] = undefined;
 			return this._disposables;
 
 		});
@@ -69,6 +83,7 @@ export class ReactPanel {
 
 		// Handle messages from the webview
 		this._panel.webview.onDidReceiveMessage(message => {
+			console.log("REceived a message", message);
 			switch (message.command) {
 				case 'alert':
 					vscode.window.showErrorMessage(message.text);
@@ -95,6 +110,15 @@ export class ReactPanel {
 				x.dispose();
 			}
 		}
+	}
+
+	setExperiment(experiment: Experiment) {
+		this._experiment = experiment;
+		this._panel.webview.postMessage({command: "set-experiment", data: experiment});
+	}
+
+	addOutput(descriptor: OutputDescriptor) {
+		this._panel.webview.postMessage({command: "add-output", data: descriptor});
 	}
 
 	private _getHtmlForWebview() {
@@ -125,7 +149,10 @@ export class ReactPanel {
 			<body>
 				<noscript>You need to enable JavaScript to run this app.</noscript>
 				<div id="root"></div>
-				
+
+				<script nonce="${nonce}">
+					const vscode = acquireVsCodeApi();
+				</script>
 				<script nonce="${nonce}" src="${scriptUri}"></script>
 			</body>
 			</html>`;

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
 import { OutputDescriptor } from 'tsp-typescript-client/lib/models/output-descriptor';
+import { ReactPanel } from "../../ReactPanels";
 
 export class AnalysisProvider implements vscode.TreeDataProvider<Analysis> {
 
@@ -19,7 +20,7 @@ export class AnalysisProvider implements vscode.TreeDataProvider<Analysis> {
       if (this.descriptors.length === 0) {
         return Promise.resolve([]);
       } else {
-        return Promise.resolve(this.descriptors.map(d => new Analysis(d.name)));
+        return Promise.resolve(this.descriptors.map(d => new Analysis(d)));
       }
     }
   }
@@ -31,14 +32,16 @@ export class AnalysisProvider implements vscode.TreeDataProvider<Analysis> {
 }
 
 class Analysis extends vscode.TreeItem {
+  _descriptor: OutputDescriptor;
   constructor(
-    public readonly name: string,
+    public readonly descriptor: OutputDescriptor,
   ) {
-    super(name);
+    super(descriptor.name);
+    this._descriptor = descriptor;
   }
 
   get tooltip(): string {
-    return `${this.name}`;
+    return `${this._descriptor.description}`;
   }
 
   get description(): string {
@@ -50,3 +53,7 @@ class Analysis extends vscode.TreeItem {
     dark: path.join(__dirname, '..', '..', '..', 'resources', 'dark', 'refresh.svg')
   };
 }
+
+export const analysisHandler = (context: vscode.ExtensionContext, analysis: Analysis) => {
+  const panel = ReactPanel.addOutputToCurrent(analysis._descriptor);
+};

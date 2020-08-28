@@ -45,6 +45,12 @@ class App extends React.Component<TraceContextProps, TraceContextState>  {
           break;
       }
     });
+    this.onOutputRemoved = this.onOutputRemoved.bind(this);
+  }
+
+  private onOutputRemoved(outputId: string) {
+    const outputToKeep = this.state.outputs.filter(output => output.id !== outputId);
+    this.setState({outputs: outputToKeep});
   }
 
   public render() {
@@ -54,7 +60,8 @@ class App extends React.Component<TraceContextProps, TraceContextState>  {
           experiment={this.state.experiment} 
           tspClient={this.state.tspClient} 
           signalHandler={this._signalHandler}
-          outputs={this.state.outputs}></TraceContextComponent>
+          outputs={this.state.outputs}
+          onOutputRemoved={this.onOutputRemoved}></TraceContextComponent>
         }
       </div>
     );

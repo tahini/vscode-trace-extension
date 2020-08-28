@@ -7,13 +7,13 @@ import { Experiment } from 'tsp-typescript-client/lib/models/experiment';
 import { TspClient } from 'tsp-typescript-client/lib/protocol/tsp-client';
 import { TimeRange } from '../utils/time-range';
 import { ISignalHandler } from '../utils/ISignalHandler';
-/*import { AbstractOutputProps } from './abstract-output-component';
-import { TableOutputComponent } from './table-output-component';
-import { TimegraphOutputComponent } from './timegraph-output-component';
-import { OutputComponentStyle } from './utils/output-component-style';
-import { TimeAxisComponent } from './utils/time-axis-component';
-import { TimeNavigatorComponent } from './utils/time-navigator-component';
-import { XYOutputComponent } from './xy-output-component';*/
+import { AbstractOutputProps } from './components/abstract-output-component';
+import { TableOutputComponent } from './components/table-output-component';
+import { TimegraphOutputComponent } from './components/timegraph-output-component';
+import { OutputComponentStyle } from './components/utils/output-component-style';
+import { TimeAxisComponent } from './components/utils/time-axis-component';
+import { TimeNavigatorComponent } from './components/utils/time-navigator-component';
+import { XYOutputComponent } from './components/xy-output-component';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -22,8 +22,8 @@ interface TraceContextProps {
     experiment: Experiment;
     signalHandler: ISignalHandler,
     outputs: OutputDescriptor[];
-  //  onOutputRemove: (outputId: string) => void;
-  //  addResizeHandler: (handler: () => void) => void;
+    onOutputRemoved: (outputId: string) => void;
+    //addResizeHandler: (handler: () => void) => void;
 }
 
 interface TraceContextState {
@@ -33,7 +33,7 @@ interface TraceContextState {
     currentTimeSelection: TimeRange | undefined;
     experiment: Experiment
     traceIndexing: boolean;
-    //style: OutputComponentStyle;
+    style: OutputComponentStyle;
 }
 
 export class TraceContextComponent extends React.Component<TraceContextProps, TraceContextState> {
@@ -71,7 +71,7 @@ export class TraceContextComponent extends React.Component<TraceContextProps, Tr
             currentTimeSelection: undefined,
             experiment: this.props.experiment,
             traceIndexing: this.props.experiment.indexingStatus === this.INDEXING_RUNNING_STATUS,
-          /*  style: {
+            style: {
                 width: this.DEFAULT_COMPONENT_WIDTH, // 1245,
                 chartWidth: this.DEFAULT_CHART_WIDTH,
                 height: this.DEFAULT_COMPONENT_HEIGHT,
@@ -80,7 +80,7 @@ export class TraceContextComponent extends React.Component<TraceContextProps, Tr
                 cursorColor: 0x259fd8,
                 lineColor: 0xbbbbbb,
                 rowHeight: 20
-            }*/
+            }
         };
         const absoluteRange = traceRange.getDuration();
         this.unitController = new TimeGraphUnitController(absoluteRange, { start: 0, end: absoluteRange });
@@ -175,11 +175,11 @@ export class TraceContextComponent extends React.Component<TraceContextProps, Tr
 
     render(): JSX.Element {
         return <div className='trace-context-container' ref={this.traceContextContainer}>
-            {this.props.outputs.length ? "" : this.renderPlaceHolder() /*this.renderOutputs() */}
+            {this.props.outputs.length ? this.renderOutputs() : this.renderPlaceHolder() /*this.renderOutputs() */}
         </div>;
     }
 
- /*   private renderOutputs() {
+    private renderOutputs() {
         const layouts = this.generateGridLayout();
         const outputs = this.props.outputs;
         return <React.Fragment>
@@ -199,16 +199,18 @@ export class TraceContextComponent extends React.Component<TraceContextProps, Tr
                         viewRange: this.state.currentViewRange,
                         selectionRange: this.state.currentTimeSelection,
                         style: this.state.style,
-                        onOutputRemove: this.props.onOutputRemove,
+                        onOutputRemove: this.props.onOutputRemoved,
                         unitController: this.unitController
                     };
                     switch (responseType) {
                         case 'TIME_GRAPH':
+                            console.log("rendering time graph", output);
                             return <div key={output.id}>
                                 <TimegraphOutputComponent key={output.id} {...outputProps}
                                     addWidgetResizeHandler={this.addWidgetResizeHandler} />
                             </div>;
                         case 'TREE_TIME_XY':
+                            console.log("rendering xy", output);
                             return <div key={output.id}>
                                 <XYOutputComponent key={output.id} {...outputProps} />
                             </div>;
@@ -217,6 +219,7 @@ export class TraceContextComponent extends React.Component<TraceContextProps, Tr
                                 <TableOutputComponent key={output.id} {...outputProps} />
                             </div>;
                         default:
+                            console.log("unknown", output);
                             break;
                     }
                 })}
@@ -225,7 +228,7 @@ export class TraceContextComponent extends React.Component<TraceContextProps, Tr
                 <TimeNavigatorComponent unitController={this.unitController} style={this.state.style} addWidgetResizeHandler={this.addWidgetResizeHandler} />
             </div>
         </React.Fragment>;
-    }*/
+    }
 
     private renderPlaceHolder() {
         return <div className='no-output-placeholder'>

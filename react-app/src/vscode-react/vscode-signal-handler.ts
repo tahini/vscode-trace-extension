@@ -1,5 +1,6 @@
 import { ISignalHandler } from '../utils/ISignalHandler';
 
+// eslint-disable-next-line
 interface vscode {
     postMessage(message: any): void;
 }

@@ -24,7 +24,7 @@ export class ReactPanel {
 	private readonly _panel: vscode.WebviewPanel;
 	private readonly _extensionPath: string;
 	private _disposables: vscode.Disposable[] = [];
-	private _experiment: Experiment = undefined;
+	private _experiment: Experiment | undefined = undefined;
 
 	public static createOrShow(extensionPath: string, name: string): ReactPanel {
 		const column = vscode.window.activeTextEditor ? vscode.window.activeTextEditor.viewColumn : undefined;

@@ -1,5 +1,10 @@
 import * as React from 'react';
 import './App.css';
+import '../style/trace-viewer.css';
+import '../style/trace-context-style.css';
+import '../style/output-components-style.css';
+import '../style/trace-explorer.css';
+import '../style/status-bar.css';
 import { Experiment } from 'tsp-typescript-client/lib/models/experiment';
 import { TspClient } from 'tsp-typescript-client/lib/protocol/tsp-client';
 import { OutputDescriptor } from 'tsp-typescript-client/lib/models/output-descriptor';
@@ -34,10 +39,11 @@ class App extends React.Component<TraceContextProps, TraceContextState>  {
       const message = event.data; // The JSON data our extension sent
       switch (message.command) {
         case "set-experiment":
-          this.setState({experiment: message.data});
+          this.setState({experiment: message.data as Experiment});
           break;
         case "set-tspClient":
-          this.setState({tspClient: message.data});
+          // TODO Pass only the URL instead of weak typing here
+          this.setState({tspClient: new TspClient(message.data.baseUrl)});
           break;
         case "add-output":
           console.log("Adding outputs", message.data);

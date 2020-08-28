@@ -203,7 +203,6 @@ export class XYOutputComponent extends AbstractTreeOutputComponent<AbstractOutpu
     // }
 
     private async updateTree() {
-        // TODO Remove cpus parameters at some point. This is very specific to Trace Compass server
         const xyTreeParameters = QueryHelper.selectionTimeQuery(
             QueryHelper.splitRangeIntoEqualParts(this.props.range.getstart(), this.props.range.getEnd(), 1120), []); // , [], { 'cpus': [] }
         const xyTreeResponse = (await this.props.tspClient.fetchXYTree<Entry, EntryHeader>(this.props.traceId, this.props.outputDescriptor.id, xyTreeParameters)).getModel();

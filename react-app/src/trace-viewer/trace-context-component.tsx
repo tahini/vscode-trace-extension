@@ -208,7 +208,7 @@ export class TraceContextComponent extends React.Component<TraceContextProps, Tr
                             return <div key={output.id}>
                                 <TimegraphOutputComponent key={output.id} {...outputProps}
                                     addWidgetResizeHandler={this.addWidgetResizeHandler} />
-                            </div>;
+                            </div>; 
                         case 'TREE_TIME_XY':
                             console.log("rendering xy", output);
                             return <div key={output.id}>

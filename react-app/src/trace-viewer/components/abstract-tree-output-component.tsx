@@ -6,6 +6,7 @@ import { Entry, EntryHeader } from 'tsp-typescript-client/lib/models/entry';
 
 export abstract class AbstractTreeOutputComponent<P extends AbstractOutputProps, S extends AbstractOutputState> extends AbstractOutputComponent<P, S> {
     renderMainArea(): React.ReactNode {
+        console.log("rendering main area");
         const treeWidth = this.props.style.width - this.props.style.chartWidth - this.getHandleWidth();
         return <React.Fragment>
             <div ref={this.treeRef} className='output-component-tree'

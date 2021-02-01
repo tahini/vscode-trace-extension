@@ -1,48 +1,129 @@
 {
-  "name": "vscode-webview-react",
+  "name": "vscode-trace-extension",
   "version": "0.1.0",
   "engines": {
-    "vscode": "^1.23.0"
+    "vscode": "^1.52.0"
   },
-  "publisher": "rebornix",
+  "publisher": "tracecompass community",
+  "categories": [
+    "Other"
+  ],
   "activationEvents": [
-    "onCommand:react-webview.start"
+    "onStartupFinished"
   ],
   "main": "./build/ext-src/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "react-webview.start",
-        "title": "Start React Webview",
-        "category": "React"
+        "command": "traces.openTrace",
+        "title": "Open Trace",
+        "icon": "ext-src/assets/media/dep.svg"
+      },
+      {
+        "command": "outputs.openOutput",
+        "title": "Open Output",
+        "icon": "ext-src/assets/media/chart-line-solid.svg"
+      },
+      {
+        "command": "traces.openTraceFile",
+        "title": "Open Trace",
+        "icon": "ext-src/assets/media/dep.svg"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "trace-explorer",
+          "title": "Trace Explorer",
+          "icon": "ext-src/assets/media/chart-line-solid.svg"
+        }
+      ]
+    },
+    "views": {
+      "trace-explorer": [
+        {
+          "id": "traces",
+          "name": "Traces",
+          "icon": "ext-src/assets/media/dep.svg"
+        },
+        {
+          "id": "analysis",
+          "name": "Analysis",
+          "icon": "ext-src/assets/media/chart-line-solid.svg"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "traces",
+        "contents": "No traces found [learn more](https://www.eclipse.org/tracecompass/).\n[Add traces](command:nodeDependencies.addEntry)"
+      },
+      {
+        "view": "analysis",
+        "contents": "No trace selected [learn more](https://www.eclipse.org/tracecompass/)"
+      }
+    ],
+    "menus": {
+      "view/item/context": [
+        {
+          "command": "traces.openTrace",
+          "when": "view == traces",
+          "group": "inline"
+        },
+        {
+          "command": "outputs.openOutput",
+          "when": "view == analysis",
+          "group": "inline"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "traces.openTraceFile",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Trace Compass",
+      "properties": {
+        "trace-compass.traceserver.url": {
+          "type": "string",
+          "default": "http://localhost:8080",
+          "description": "Enter the trace server's URL, including port. Eg: http://localhost:8080."
+        },
+        "trace-compass.traceserver.apiPath": {
+          "type": "string",
+          "default": "tsp/api",
+          "description": "Enter the trace server's API path, to be appended to the server URL. Eg: 'tsp/api'."
+        }
+      }
+    }
   },
   "dependencies": {
     "react": "^16.3.2",
     "react-dom": "^16.3.2",
     "terser": "3.16.0",
-    "vscode": "^1.1.17"
-  },
-  "resolutions": {
-    "terser": "3.14.1"
-  },
-  "scripts": {
-    "vscode:prepublish": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "start": "react-scripts start",
-    "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "tsp-typescript-client": "next"
   },
   "devDependencies": {
     "@types/jest": "^23.3.13",
     "@types/node": "^10.1.2",
     "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.5",
+    "@types/vscode": "^1.52.0",
     "react-scripts": "^2.1.3",
     "rewire": "^4.0.1",
     "typescript": "^3.3.1"
+  },
+  "resolutions": {
+    "terser": "3.14.1"
+  },
+  "scripts": {
+    "vscode:prepublish": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
+    "start": "react-scripts start",
+    "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
   },
   "browserslist": [
     ">0.2%",

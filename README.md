@@ -49,6 +49,21 @@ The analysis tab should be populated. Again, click on the icon to open the view 
 
 ![open-output](https://raw.githubusercontent.com/tahini/vscode-trace-extension/master/doc/images/OpenOutput.png)
 
+## Developping the extension
+
+When having to modify the code of the extension (in the `ext-src` folder), on can simply run the `yarn build:extension` command. It is also possible to watch for changes to have no manual steps to do before re-running the extension: `yarn watch:extension` or `ctrl-shift-b` and select the task `tsc: watch - tsconfig.extension.json`.
+
+There is no watch option for the react-app yet though, so if modifying those files, one needs to build the react-app again with the task `yarn build:react` or `ctrl-shift-b` and selecting the task `npm: build:react`.
+
+### Debugging the extension
+
+It is straightforward to debug the code of the vscode extension itself (the code in `ext-src`) by just putting breakpoints in vscode and running the extension with `f5`.
+
+The react-app is another matter. The panel is a webview that is running in its own context, so current vscode does not have access to it. _(Patches welcome!)_ 
+
+Each panel is its own small web application, so to debug, while in the context of the webview, press `ctrl-shift-p` and entre the command `Developer: Open Webview Developer Tools`. This will open the developer tools. The code is in the `Sources` tab of the developer tools window that opens.
+
+
 ### Troubleshooting
 
  * The `Trace explorer` panel is not there, or disappears when switching panel.

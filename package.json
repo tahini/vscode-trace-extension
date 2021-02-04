@@ -121,8 +121,11 @@
     "terser": "3.14.1"
   },
   "scripts": {
-    "vscode:prepublish": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
-    "build": "./scripts/build-non-split.js && tsc -p tsconfig.extension.json",
+    "vscode:prepublish": "yarn build",
+    "build": "yarn build:react && yarn build:extension",
+    "build:react": "NODE_ENV=development ./scripts/build-non-split.js",
+    "start": "react-scripts start",
+    "build:extension": "tsc -p tsconfig.extension.json",
     "test": "react-scripts test --env=jsdom",
     "vsce:package": "vsce package",
     "watch:extension": "tsc -w -p tsconfig.extension.json"

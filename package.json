@@ -113,9 +113,14 @@
     "@types/react": "^16.3.14",
     "@types/react-dom": "^16.0.5",
     "@types/vscode": "^1.52.0",
-    "react-scripts": "^2.1.3",
+    "css-loader": "^5.0.1",
     "rewire": "^4.0.1",
-    "typescript": "^3.3.1"
+    "style-loader": "^2.0.0",
+    "svg-url-loader": "^7.1.1",
+    "ts-loader": "^8.0.14",
+    "typescript": "^4.1.3",
+    "webpack": "^5.20.2",
+    "webpack-cli": "^4.5.0"
   },
   "resolutions": {
     "terser": "3.14.1"
@@ -123,12 +128,12 @@
   "scripts": {
     "vscode:prepublish": "yarn build",
     "build": "yarn build:react && yarn build:extension",
-    "build:react": "NODE_ENV=development ./scripts/build-non-split.js",
-    "start": "react-scripts start",
+    "build:react": "webpack --mode development",
     "build:extension": "tsc -p tsconfig.extension.json",
     "test": "react-scripts test --env=jsdom",
     "vsce:package": "vsce package",
-    "watch:extension": "tsc -w -p tsconfig.extension.json"
+    "watch:extension": "tsc -w -p tsconfig.extension.json",
+    "watch:react": "webpack --watch --mode development"
   },
   "browserslist": [
     ">0.2%",

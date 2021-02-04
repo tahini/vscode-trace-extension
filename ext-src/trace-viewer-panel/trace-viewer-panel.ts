@@ -50,7 +50,6 @@ export class TraceViewerPanel {
 
 	private constructor(extensionPath: string, column: vscode.ViewColumn, name: string) {
 		this._extensionPath = extensionPath;
-		console.log("extension path: ", path.join(this._extensionPath, 'build'));
 		// Create and show a new webview panel
 		this._panel = vscode.window.createWebviewPanel(TraceViewerPanel.viewType, name, column, {
 			// Enable javascript in the webview
@@ -139,7 +138,6 @@ export class TraceViewerPanel {
 		try {
 			return this._getReactHtmlForWebview();
 		} catch (e) {
-			console.log('Exception getting manifest', e);
 			return `<!DOCTYPE html>
 			<html lang="en">
 			<head>
@@ -152,7 +150,7 @@ export class TraceViewerPanel {
 
 			<body>
 				<noscript>You need to enable JavaScript to run this app.</noscript>
-				<div>Error initializing trace viewer</div>
+				<div>${'Error initializing trace viewer'}</div>
 			</body>
 			</html>`;
 		}
